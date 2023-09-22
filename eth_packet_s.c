@@ -31,7 +31,6 @@ uint8_t *write_mac_head(mac_head_s *head, size_t *len){
 	/* calculate mac header length */
 	*len = get_mac_head_len(head);
 	uint8_t *buff = malloc(sizeof(uint8_t)*(*len));
-	const size_t cpy_size = MAC_HEAD_BASE_LITE_SIZE;
 
 	/* copy head up until tag/type */
 	memcpy(buff, head, MAC_HEAD_BASE_LITE_SIZE);
@@ -71,6 +70,13 @@ mac_foot_s *read_mac_foot(uint8_t *buff, size_t len){
 	memcpy(foot, buff, sizeof(mac_foot_s));
 	return foot;
 }
+uint8_t *write_mac_foot(mac_foot_s *foot, size_t *len){
+	assert(foot);
+	*len = MAC_FOOT_SIZE;
+	uint8_t *buff = malloc(sizeof(uint8_t)*(*len));
+	memcpy( buff, foot, sizeof(uint8_t)*(*len));
+	return buff;
+}
 
 /* IPv4 */
 
@@ -108,16 +114,16 @@ uint8_t *write_ipv4_head(ipv4_head_s *head, size_t *len){
 	buff[0] |= (uint8_t)0xf0 & ((uint8_t)head->ihl << 4);	
 	buff[1] |= (uint8_t)0x3f & head->dscp;	
 	buff[1] |= (uint8_t)0xc0 & ((uint8_t)head->ecn << 6);
-	memcpy(buff+2, head->tot_len, 2);	
-	memcpy(buff+4, head->id, 2);
+	memcpy(buff+2, &(head->tot_len), 2);	
+	memcpy(buff+4, &(head->id), 2);
 	buff[6] = (uint8_t)0x7 & ((uint8_t)head->flags);
 	buff[6] = (uint8_t)0xf8 & ((uint16_t)head->frag_off<<3);
 	buff[7] = (uint8_t)0xff & ((uint32_t)head->frag_off<<11);
 	buff[8] = head->ttl;
 	buff[9] = head->prot;
-	memcpy(buff+10, head->head_cs, 2);	
-	memcpy(buff+12, head->src_addr, 4);	
-	memcpy(buff+16, head->dst_addr, 4);
+	memcpy(buff+10, &(head->head_cs), 2);	
+	memcpy(buff+12, &(head->src_addr), 4);	
+	memcpy(buff+16, &(head->dst_addr), 4);
 
 	return buff;	
 }
@@ -138,6 +144,13 @@ udp_head_s *read_udp_head(uint8_t *buff, size_t len){
 	
 	return head;
 }
+uint8_t *write_udp_head(udp_head_s* head, size_t *len){
+	assert(head);
+	*len = UDP_HEAD_SIZE;
+	uint8_t *buff = malloc(sizeof(uint8_t)*(*len));
+	memcpy(buff, head, (*len));
+	return buff;	
+} 
 
 
 /* Full packet */
@@ -177,5 +190,48 @@ eth_packet_s * read_eth_packet(uint8_t *buff, size_t len){
 	pkt->mac_foot = read_mac_foot(buff+off,len-off);
 
 	return pkt; 
+}
+
+uint8_t *write_eth_packet(eth_packet_s* pkt, size_t *len){
+	assert(pkt);
+	
+	/* head */
+	uint8_t *mac_head_buff;	
+	uint8_t *ipv4_head_buff;	
+	uint8_t *trans_head_buff;	
+	size_t mac_len, ipv4_len, trans_len;
+	mac_head_buff = write_mac_head(pkt->mac_head, &mac_len);
+	ipv4_head_buff = write_ipv4_head(pkt->ipv4_head, &ipv4_len);
+	switch (pkt->ipv4_head->prot){
+		case PROTOCOL_UDP:
+			trans_head_buff = write_udp_head(pkt->udp_head, &trans_len);
+			break;
+		default :
+			printf("ERROR: Unexpected transport protocol, got %x\n", pkt->ipv4_head->prot);
+			assert(0);
+			break;	
+	}
+	/* foot */
+	uint8_t *mac_foot_buff;
+	size_t mac_foot_len;
+	mac_foot_buff = write_mac_foot(pkt->mac_foot, &mac_foot_len);
+
+	/* calculate total length */
+	(*len) = mac_len + ipv4_len + trans_len + pkt->data_len + mac_foot_len;
+	uint8_t *buff = malloc(sizeof(uint8_t)*(*len));
+	memcpy(buff, mac_head_buff, mac_len);
+	size_t off = mac_len;
+	memcpy(buff+off, ipv4_head_buff, ipv4_len);
+	off += ipv4_len;
+	memcpy(buff+off, trans_head_buff, trans_len);
+	off+= trans_len;
+	memcpy(buff+off, pkt->data, pkt->data_len);
+	off += pkt->data_len;
+	memcpy(buff+off, mac_foot_buff, mac_foot_len);
+	off += mac_foot_len;
+
+	assert( off == (*len));
+
+	return buff;				
 }
 

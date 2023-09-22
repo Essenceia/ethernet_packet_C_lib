@@ -30,7 +30,7 @@ typedef struct{
 }__attribute__((__packed__)) mac_foot_s;
 
 mac_foot_s *read_mac_foot(uint8_t *buff, size_t len);
-
+uint8_t *write_mac_foot(mac_foot_s*foot, size_t *len);
 /* ipv4 */
 typedef struct{
 	uint8_t ver : 4;/* 4 bits */
@@ -62,7 +62,7 @@ typedef struct{
 }udp_head_s;
 
 udp_head_s *read_udp_head(uint8_t *buff, size_t len);
-
+uint8_t *write_udp_head(udp_head_s* head, size_t *len); 
 /* tcp */
 typedef struct{
 
@@ -85,4 +85,6 @@ typedef struct{
 bool is_udp(eth_packet_s *eth);
 
 eth_packet_s * read_eth_packet(uint8_t *buff, size_t len);
+uint8_t *write_eth_packet(eth_packet_s* eth, size_t *len);
+
 #endif //ETH_PACKET_S_H
