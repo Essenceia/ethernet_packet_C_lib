@@ -11,7 +11,7 @@ FLAGS = -std=gnu99 -Wall -Wextra -Wconversion -Wshadow -Wundef -fno-common  -Wno
 CC = cc $(if $(debug),-DDEBUG -g)
 LD = cc
 
-test : test.o eth_packet_s.o
+test : test.o eth_packet_s.o mac.o
 	$(LD) -o test -g $^
 
 test.o : test.c
@@ -19,6 +19,9 @@ test.o : test.c
 
 eth_packet_s.o: eth_defs.h eth_packet_s.h eth_packet_s.c
 	$(CC) -c eth_packet_s.c $(FLAGS)
+
+mac.o: mac.h mac.c
+	$(CC) -c mac.c $(FLAGS)
 
 lib: eth_packet_s.o
 	ar rcs $(LIB_NAME) $^ 
