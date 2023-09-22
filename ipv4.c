@@ -61,4 +61,46 @@ bool ipv4_protocol_is_udp(ipv4_head_s *head){
 	return head->prot == PROTOCOL_UDP;
 }
 
+ipv4_head_s *init_ipv4_head(
+	const uint64_t src_addr,
+	const uint64_t dst_addr,
+	const size_t ip_data_len,
+	const uint8_t protocol
+){
+	ipv4_head_s *head = malloc(sizeof(init_ipv4_head));
+	head->ver = 4;
+	head->ihl = 5;
+	head->dscp = 0;
+	head->ecn = 0;
+	head->tot_len = ( head->ihl )*5 + ip_data_len;
+	head->id = 0;
+	head->flags = 1;
+	head->frag_off = 0;
+	head->ttl = 64;
+	head->prot = protocol;
+	head->src_addr = src_addr;
+	head->dst_addr = dst_addr;
+	head->head_cs = calculate_ipv4_header_checksum(head);
+
+	return head;
+}
+
+uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
+	uint16_t sum = 0;
+	sum += ((uint16_t)head->ecn << 14 )
+		 | ((uint16_t)head->dscp << 8 )
+		 | ((uint16_t)head->ihl << 4 )
+		 | ((uint16_t)head->ver );
+	sum += head->tot_len;
+	sum += head->id;
+	sum += ((uint16_t)head->flags)
+		 | ((uint16_t)head->frag_off << 2);
+	sum += ((uint16_t)head->ttl )
+		 | ((uint16_t)head->prot<<8);
+	sum += ((uint16_t)head->src_addr);	
+	sum += ((uint16_t)head->src_addr>>16);	
+	sum += ((uint16_t)head->dst_addr );	
+	sum += ((uint16_t)head->dst_addr>>16);
+	return sum;	
+}
 

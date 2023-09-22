@@ -15,5 +15,15 @@ int main(){
 
 	printf("PASS: data { 0 } crc result : %08x\n", crc);
 
+	/* create packet */
+	pkt = init_eth_packet(
+		DEFAULT_DST_MAC,
+		DEFAULT_SRC_MAC,
+		DEFAULT_SRC_IP,
+		DEFAULT_DST_IP,
+		DEFAULT_SRC_PORT,
+		DEFAULT_DST_PORT,
+		false);
+
 	return 0;
 }

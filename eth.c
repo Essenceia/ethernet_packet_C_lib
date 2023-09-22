@@ -82,8 +82,63 @@ uint8_t *write_eth_packet(eth_packet_s* pkt, size_t *len){
 	memcpy(buff+off, mac_foot_buff, mac_foot_len);
 	off += mac_foot_len;
 
+	free(mac_head_buff);
+	free(ipv4_head_buff);
+	free(trans_head_buff);
+	free(mac_foot_buff);
+
 	assert( off == (*len));
 
 	return buff;				
+}
+
+eth_packet_s *init_eth_packet(
+	const uint8_t dst_mac[6],
+	const uint8_t src_mac[6],
+	const uint64_t src_ip,
+	const uint64_t dst_ip,
+	const uint32_t src_port,
+	const uint32_t dst_port, 
+	const bool vtag
+){
+	eth_packet_s *eth = malloc(sizeof(eth_packet_s));
+
+	/* set data len to 0 */
+	size_t data_len = 0;
+	eth->data = NULL;
+
+	/* MAC head */
+	eth->mac_head = init_mac_foot(
+		dst_mac, 
+		src_mac, 
+		vtag);
+
+	/* IPv4 head */
+	size_t ip_data_len = data_len + UDP_HEAD_SIZE;
+	eth->ipv4_head = init_ipv4_head(src_ip,
+									dst_ip,	
+									ip_data_len,	
+									PROTOCOL_UDP);
+	
+	/* UDP head */
+	eth->udp_head = init_udp_head(src_port,
+								  dst_port,
+								  data_len);
+	/* MAC foot */
+	eth->mac_foot = init_mac_foot();
+
+	update_eth_packet_crc(eth);
+}
+
+void update_eth_packet_crc(eth_packet_s *eth){
+	/* translate packet into contents into uint8_t buffer */
+	uint8_t *buff;
+	size_t buff_len;
+	buff = write_eth_packet(eth, &buff_len);
+	/* skip mac preamble */
+	buff_len -= 8 + 4;
+	uint32_t crc = calculate_crc(buff+8, buff_len);
+	eth->mac_foot->crc = crc;
+	free(buff);	
 }
 

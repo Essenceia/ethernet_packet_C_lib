@@ -29,4 +29,17 @@ uint8_t *write_udp_head(udp_head_s* head, size_t *len){
 	return buff;	
 } 
 
+udp_head_s * init_udp_head(
+	const uint32_t src_port,
+	const uint32_t dst_port,
+	const uint32_t udp_data_len
+){
+	udp_head_s *head;
+	head = malloc(sizeof(udp_head_s));
+	head->src_port = src_port;
+	head->dst_port = dst_port;
+	head->len = UDP_HEAD_SIZE + udp_data_len;
+	head->cs = 0;
 
+	return head;
+}	

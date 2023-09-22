@@ -96,3 +96,28 @@ uint32_t calculate_crc(uint8_t *buff, size_t len){
 	return crc;
 }
 
+mac_head_s *init_mac_head(
+	const uint8_t dst_addr[6],
+	const uint8_t src_addr[6],
+	const bool vtag
+){
+	mac_head_s *mac = malloc(sizeof(mac_head_s));
+	memset(mac->pre,0x55, 7);
+	mac->sfd = 0xd5;
+	memcpy(mac->dst_addr, dst_addr, 6);
+	memcpy(mac->src_addr, src_addr, 6);
+	if ( vtag ){
+		mac->tpid = 0x8100;
+		mac->tci = 0;
+	}else{
+		mac->tpid = 0;
+	}
+	mac->type = 0x0800; /* IPv4 */
+	return mac; 
+}
+
+mac_foot_s *init_mac_foot(){
+	mac_foot_s *foot = malloc(sizeof(mac_foot_s));
+	return foot;
+}
+

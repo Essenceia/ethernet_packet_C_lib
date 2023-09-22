@@ -19,4 +19,8 @@ void set_udp_len(udp_head_s *head, size_t data_len);
 
 uint8_t *write_udp_head(udp_head_s* head, size_t *len); 
 
+udp_head_s * init_udp_head(
+	const uint32_t scr_port,
+	const uint32_t dst_port,
+	const uint32_t udp_data_len);	
 #endif // UDP_H

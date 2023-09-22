@@ -1,5 +1,6 @@
 #ifndef ETH_DEFS_H
 #define ETH_DEFS_H
+#include <stdint.h>
 
 #define MAC_TPID (uint16_t) 0x8100
 
@@ -18,4 +19,11 @@
 
 #define UDP_HEAD_SIZE (size_t) 8
 
+/* default values */
+#define DEFAULT_DST_MAC ((uint8_t[6]) { 0xFC, 0xFC, 0x48, 0, 0, 0})
+#define DEFAULT_SRC_MAC ((uint8_t[6]) { 0x00, 0x00, 0x01, 0, 0, 0})
+#define DEFAULT_DST_IP (uint32_t) 0x0
+#define DEFAULT_SRC_IP (uint32_t) 0x1
+#define DEFAULT_DST_PORT (uint32_t) 80
+#define DEFAULT_SRC_PORT (uint32_t) 80
 #endif // ETH_DEFS_H

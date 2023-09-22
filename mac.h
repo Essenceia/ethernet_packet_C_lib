@@ -25,12 +25,20 @@ bool mac_has_tag(mac_head_s *mac_head);
 
 size_t get_mac_head_len(mac_head_s *head);
 
+mac_head_s *init_mac_head(
+	const uint8_t dst_addr[6],
+	const uint8_t src_addr[6],
+	const bool vtag);
+
+
 typedef struct{
-	uint8_t crc[4];
+	uint32_t crc;
 }__attribute__((__packed__)) mac_foot_s;
 
 mac_foot_s *read_mac_foot(uint8_t *buff, size_t len);
 uint8_t *write_mac_foot(mac_foot_s*foot, size_t *len);
+
+mac_foot_s *init_mac_foot();
 
 uint32_t calculate_crc(uint8_t *buff, size_t len);
 #endif //MAC_H
