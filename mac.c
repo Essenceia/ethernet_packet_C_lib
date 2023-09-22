@@ -1,4 +1,4 @@
-#include "eth_packet_s.h"
+#include "mac.h"
 #include "eth_defs.h"
 #include <assert.h>
 #include <stdlib.h>

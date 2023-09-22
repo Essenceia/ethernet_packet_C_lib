@@ -1,4 +1,4 @@
-#include "eth_packet_s.h"
+#include "eth.h"
 #include <stdio.h>
 #include <assert.h>
 

@@ -14,6 +14,9 @@ typedef struct{
 }udp_head_s;
 
 udp_head_s *read_udp_head(uint8_t *buff, size_t len);
+
+void set_udp_len(udp_head_s *head, size_t data_len);
+
 uint8_t *write_udp_head(udp_head_s* head, size_t *len); 
 
 #endif // UDP_H

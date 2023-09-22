@@ -1,7 +1,7 @@
 DOC_DIR=doc
 RELEASE=release
 INC=inc
-LIB_NAME=lib_eth_packet.a
+LIB_NAME=lib_eth.a
 
 ifndef debug
 debug:=
@@ -11,14 +11,14 @@ FLAGS = -std=gnu99 -Wall -Wextra -Wconversion -Wshadow -Wundef -fno-common  -Wno
 CC = cc $(if $(debug),-DDEBUG -g)
 LD = cc
 
-test : test.o eth_packet_s.o mac.o ipv4.o udp.o
+test : test.o eth.o mac.o ipv4.o udp.o tcp.o
 	$(LD) -o test -g $^
 
 test.o : test.c
 	$(CC) -c test.c $(FLAGS)
 
-eth_packet_s.o: eth_defs.h eth_packet_s.h eth_packet_s.c
-	$(CC) -c eth_packet_s.c $(FLAGS)
+eth.o: eth_defs.h eth.h eth.c
+	$(CC) -c eth.c $(FLAGS)
 
 mac.o: mac.h mac.c
 	$(CC) -c mac.c $(FLAGS)
@@ -29,7 +29,11 @@ ipv4.o: ipv4.h ipv4.c
 udp.o: udp.c udp.h
 	$(CC) -c udp.c $(FLAGS)
 
-lib: eth_packet_s.o mac.o ipv4.o udp.o
+tcp.o: tcp.c tcp.h
+	$(CC) -c tcp.c $(FLAGS)
+
+
+lib: eth_packet_s.o mac.o ipv4.o udp.o tcp.o
 	ar rcs $(LIB_NAME) $^ 
 
 release: lib

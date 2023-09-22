@@ -1,5 +1,5 @@
-#ifndef ETH_PACKET_S_H
-#define ETH_PACKET_S_H
+#ifndef ETH_H
+#define ETH_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -8,11 +8,7 @@
 #include "mac.h"
 #include "ipv4.h"
 #include "udp.h"
-
-/* tcp */
-typedef struct{
-
-}tcp_head_s;
+#include "tcp.h"
 
 /* udp/tcp packet */
 typedef struct{
@@ -34,4 +30,4 @@ eth_packet_s * read_eth_packet(uint8_t *buff, size_t len);
 uint8_t *write_eth_packet(eth_packet_s* eth, size_t *len);
 
 
-#endif //ETH_PACKET_S_H
+#endif //ETH_S_H
