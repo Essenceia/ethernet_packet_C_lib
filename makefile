@@ -11,7 +11,7 @@ FLAGS = -std=gnu99 -Wall -Wextra -Wconversion -Wshadow -Wundef -fno-common  -Wno
 CC = cc $(if $(debug),-DDEBUG -g)
 LD = cc
 
-test : test.o eth_packet_s.o mac.o
+test : test.o eth_packet_s.o mac.o ipv4.o
 	$(LD) -o test -g $^
 
 test.o : test.c
@@ -23,7 +23,10 @@ eth_packet_s.o: eth_defs.h eth_packet_s.h eth_packet_s.c
 mac.o: mac.h mac.c
 	$(CC) -c mac.c $(FLAGS)
 
-lib: eth_packet_s.o
+ipv4.o: ipv4.h ipv4.c
+	$(CC) -c ipv4.c $(FLAGS)
+
+lib: eth_packet_s.o mac.o ipv4.o
 	ar rcs $(LIB_NAME) $^ 
 
 release: lib
