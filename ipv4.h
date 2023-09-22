@@ -7,14 +7,14 @@
 
 /* ipv4 */
 typedef struct{
-	uint8_t ver : 4;/* 4 bits */
-	uint8_t ihl : 4;
-	uint8_t dscp : 6;
-	uint8_t ecn : 2;
+	uint8_t ver;/* 4 bits */
+	uint8_t ihl;/* 4 bits */
+	uint8_t dscp;/* 6 bits */
+	uint8_t ecn;/* 2 bits */
 	uint16_t tot_len;
 	uint16_t id;
-	uint8_t flags : 3;
-	uint16_t frag_off : 13;
+	uint8_t flags;/* 3 bits */
+	uint16_t frag_off;/* 13 bits */
 	uint8_t ttl;
 	uint8_t prot;
 	uint16_t head_cs;

@@ -1,5 +1,7 @@
 #include "eth.h"
+#include "defs.h"
 #include "eth_defs.h"
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -69,8 +71,12 @@ uint8_t *write_eth_packet(eth_packet_s* pkt, size_t *len){
 	mac_foot_buff = write_mac_foot(pkt->mac_foot, &mac_foot_len);
 
 	/* calculate total length */
-	(*len) = mac_len + ipv4_len + trans_len + pkt->data_len + mac_foot_len;
-	uint8_t *buff = malloc(sizeof(uint8_t)*(*len));
+	size_t buff_len = mac_len + ipv4_len + trans_len + pkt->data_len + mac_foot_len;
+	(*len) = buff_len;
+	info("eth packet buff len %ld\n", *len);
+
+	uint8_t *buff = malloc(sizeof(uint8_t)*buff_len);
+
 	memcpy(buff, mac_head_buff, mac_len);
 	size_t off = mac_len;
 	memcpy(buff+off, ipv4_head_buff, ipv4_len);
@@ -101,6 +107,8 @@ eth_packet_s *init_eth_packet(
 	const uint32_t dst_port, 
 	const bool vtag
 ){
+	info("Init eth packet");
+
 	eth_packet_s *eth = malloc(sizeof(eth_packet_s));
 
 	/* set data len to 0 */
@@ -108,7 +116,7 @@ eth_packet_s *init_eth_packet(
 	eth->data = NULL;
 
 	/* MAC head */
-	eth->mac_head = init_mac_foot(
+	eth->mac_head = init_mac_head(
 		dst_mac, 
 		src_mac, 
 		vtag);
@@ -123,11 +131,13 @@ eth_packet_s *init_eth_packet(
 	/* UDP head */
 	eth->udp_head = init_udp_head(src_port,
 								  dst_port,
-								  data_len);
+								  (uint32_t)data_len);
 	/* MAC foot */
 	eth->mac_foot = init_mac_foot();
 
 	update_eth_packet_crc(eth);
+
+	return eth;
 }
 
 void update_eth_packet_crc(eth_packet_s *eth){
@@ -141,4 +151,18 @@ void update_eth_packet_crc(eth_packet_s *eth){
 	eth->mac_foot->crc = crc;
 	free(buff);	
 }
+
+void free_eth_packet(eth_packet_s* eth){
+	assert(eth);
+	free(eth->mac_head);
+	free(eth->ipv4_head);
+	if(eth->udp_head != NULL)
+		free(eth->udp_head);
+	if(eth->tcp_head != NULL)
+		free(eth->tcp_head);
+	free(eth->data);
+	free(eth->mac_foot);
+	free(eth);
+}
+
 

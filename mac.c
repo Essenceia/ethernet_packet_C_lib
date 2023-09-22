@@ -1,5 +1,7 @@
 #include "mac.h"
 #include "eth_defs.h"
+#include "defs.h"
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -101,6 +103,9 @@ mac_head_s *init_mac_head(
 	const uint8_t src_addr[6],
 	const bool vtag
 ){
+
+	info("Init mac head\n");
+
 	mac_head_s *mac = malloc(sizeof(mac_head_s));
 	memset(mac->pre,0x55, 7);
 	mac->sfd = 0xd5;
@@ -113,11 +118,36 @@ mac_head_s *init_mac_head(
 		mac->tpid = 0;
 	}
 	mac->type = 0x0800; /* IPv4 */
+	
+	print_mac_head(mac);
+
+	#ifdef DEBUG
+	print_mac_head(mac);
+	#endif
+
 	return mac; 
 }
 
 mac_foot_s *init_mac_foot(){
 	mac_foot_s *foot = malloc(sizeof(mac_foot_s));
 	return foot;
+}
+
+void print_mac_head(mac_head_s *head){
+	printf("mac head {\n");
+	printf("\tpre : ");
+	for(int i=0; i<7; i++)
+		printf("%x ",head->pre[i]);
+	printf("\n\tsfd : %x\n",head->sfd);
+	printf("\tdst mac : ");
+	print_mac_addr(head->dst_addr);
+	printf("\n\tsrc mac : ");
+	print_mac_addr(head->src_addr);
+	printf("\n");
+	if ( mac_has_tag(head)){
+		printf("\ttpid : %x\n",head->tpid);
+		printf("\ttpid : %x\n",head->tpid);
+	}
+	printf("\ttype : %x\n}\n",head->type);
 }
 

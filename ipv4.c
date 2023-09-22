@@ -44,8 +44,8 @@ uint8_t *write_ipv4_head(ipv4_head_s *head, size_t *len){
 	memcpy(buff+2, &(head->tot_len), 2);	
 	memcpy(buff+4, &(head->id), 2);
 	buff[6] = (uint8_t)0x7 & ((uint8_t)head->flags);
-	buff[6] = (uint8_t)0xf8 & ((uint16_t)head->frag_off<<3);
-	buff[7] = (uint8_t)0xff & ((uint32_t)head->frag_off<<11);
+	buff[6] = (uint8_t)0xf8 & ((uint8_t)(head->frag_off<<3));
+	buff[7] = (uint8_t)0xff & ((uint32_t)(head->frag_off<<11));
 	buff[8] = head->ttl;
 	buff[9] = head->prot;
 	memcpy(buff+10, &(head->head_cs), 2);	
@@ -67,12 +67,12 @@ ipv4_head_s *init_ipv4_head(
 	const size_t ip_data_len,
 	const uint8_t protocol
 ){
-	ipv4_head_s *head = malloc(sizeof(init_ipv4_head));
+	ipv4_head_s *head = malloc(sizeof(ipv4_head_s));
 	head->ver = 4;
 	head->ihl = 5;
 	head->dscp = 0;
 	head->ecn = 0;
-	head->tot_len = ( head->ihl )*5 + ip_data_len;
+	head->tot_len = (uint16_t)(((uint16_t)(head->ihl))*5) + (uint16_t)ip_data_len;
 	head->id = 0;
 	head->flags = 1;
 	head->frag_off = 0;
@@ -87,20 +87,20 @@ ipv4_head_s *init_ipv4_head(
 
 uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
 	uint16_t sum = 0;
-	sum += ((uint16_t)head->ecn << 14 )
-		 | ((uint16_t)head->dscp << 8 )
-		 | ((uint16_t)head->ihl << 4 )
-		 | ((uint16_t)head->ver );
+	sum += (uint16_t)((uint16_t)(head->ecn)  << 14 )
+		 | ((uint16_t)(head->dscp) << 8 )
+		 | ((uint16_t)(head->ihl)  << 4 )
+		 |  (uint16_t)(head->ver);
 	sum += head->tot_len;
 	sum += head->id;
-	sum += ((uint16_t)head->flags)
-		 | ((uint16_t)head->frag_off << 2);
-	sum += ((uint16_t)head->ttl )
-		 | ((uint16_t)head->prot<<8);
-	sum += ((uint16_t)head->src_addr);	
-	sum += ((uint16_t)head->src_addr>>16);	
-	sum += ((uint16_t)head->dst_addr );	
-	sum += ((uint16_t)head->dst_addr>>16);
+	sum += (uint16_t)(head->flags)
+		 | ((uint16_t)(head->frag_off) << 2);
+	sum += (uint16_t)(head->ttl)
+		 | ((uint16_t)(head->prot)<<8);
+	sum += (uint16_t)(head->src_addr);	
+	sum += (uint16_t)((uint16_t)(head->src_addr)>>16);	
+	sum += (uint16_t)(head->dst_addr);	
+	sum += (uint16_t)(head->dst_addr>>16);
 	return sum;	
 }
 

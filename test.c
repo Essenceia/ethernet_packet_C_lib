@@ -25,5 +25,7 @@ int main(){
 		DEFAULT_DST_PORT,
 		false);
 
+	free_eth_packet(pkt);
+
 	return 0;
 }
