@@ -23,4 +23,7 @@ udp_head_s * init_udp_head(
 	const uint32_t scr_port,
 	const uint32_t dst_port,
 	const uint32_t udp_data_len);	
+
+void print_udp_head(udp_head_s * head);
+
 #endif // UDP_H

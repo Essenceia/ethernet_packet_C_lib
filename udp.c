@@ -42,4 +42,15 @@ udp_head_s * init_udp_head(
 	head->cs = 0;
 
 	return head;
-}	
+}
+
+void print_udp_head(udp_head_s * head){
+	assert(head);
+	printf("udp head {\n");
+	printf("\tsrc port : %u\n", head->src_port);
+	printf("\tdst port : %u\n", head->dst_port);
+	printf("\tlen : %u\n", head->len);
+	printf("\tcs : %u\n", head->cs);
+
+}
+	

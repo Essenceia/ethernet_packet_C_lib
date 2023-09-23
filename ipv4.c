@@ -62,8 +62,8 @@ bool ipv4_protocol_is_udp(ipv4_head_s *head){
 }
 
 ipv4_head_s *init_ipv4_head(
-	const uint64_t src_addr,
-	const uint64_t dst_addr,
+	const uint32_t src_addr,
+	const uint32_t dst_addr,
 	const size_t ip_data_len,
 	const uint8_t protocol
 ){
@@ -102,5 +102,26 @@ uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
 	sum += (uint16_t)(head->dst_addr);	
 	sum += (uint16_t)(head->dst_addr>>16);
 	return sum;	
+}
+
+void print_ipv4_head(ipv4_head_s *head){
+	printf("ip head {\n");
+	printf("\tver : %x\n",head->ver);
+	printf("\tihl : %x\n",head->ihl);
+	printf("\tdscp : %x\n",head->dscp);
+	printf("\tecn : %x\n",head->ecn);
+	printf("\ttot len : %u\n",head->tot_len);
+	printf("\tid : %u\n",head->id);
+	printf("\tflags : %x\n",head->flags);
+	printf("\tflag off : %u\n",head->frag_off);
+	printf("\tttl : %u\n",head->ttl);
+	printf("\tprot : %u\n",head->prot);
+	printf("\thead cs : %x\n",head->head_cs);
+	printf("\tsrc addr : ");
+	print_ipv4_addr(head->src_addr);
+	printf("\n");
+	printf("\tdst addr : ");
+	print_ipv4_addr(head->dst_addr);
+	printf("\n}\n");
 }
 

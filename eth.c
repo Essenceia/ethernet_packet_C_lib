@@ -165,4 +165,19 @@ void free_eth_packet(eth_packet_s* eth){
 	free(eth);
 }
 
+void print_eth_packet(eth_packet_s * eth){
+	assert(eth);
+	/* heads */
+	print_mac_head(eth->mac_head);
+	print_ipv4_head(eth->ipv4_head);
+	print_udp_head(eth->udp_head);
+	/* application data */
+	printf("app {\n\tlen : %ld\n\tdata :\n", eth->data_len);
+	for(size_t i=0; i< eth->data_len; i++){
+		printf("\t[%ld] : %x\n",i, eth->data[i]);
+	}
+	printf("}\n");
+	/* footer */
+	print_mac_foot(eth->mac_foot);
+}
 

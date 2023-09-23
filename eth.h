@@ -52,4 +52,8 @@ void update_eth_packet_crc(eth_packet_s *eth);
 
 /* destructor */
 void free_eth_packet(eth_packet_s* eth);
+
+/* print */
+void print_eth_packet(eth_packet_s * eth);
+
 #endif //ETH_S_H

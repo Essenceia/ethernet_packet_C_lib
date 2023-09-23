@@ -24,6 +24,8 @@ int main(){
 		DEFAULT_SRC_PORT,
 		DEFAULT_DST_PORT,
 		false);
+	
+	print_eth_packet(pkt);
 
 	free_eth_packet(pkt);
 

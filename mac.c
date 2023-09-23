@@ -151,3 +151,9 @@ void print_mac_head(mac_head_s *head){
 	printf("\ttype : %x\n}\n",head->type);
 }
 
+void print_mac_foot(mac_foot_s * foot){
+	printf("mac foot {\n");
+	printf("\tcrc : %x\n}\n",foot->crc);
+
+}
+

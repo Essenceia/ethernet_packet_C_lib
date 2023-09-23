@@ -45,6 +45,9 @@ mac_foot_s *init_mac_foot();
 
 uint32_t calculate_crc(uint8_t *buff, size_t len);
 
+void print_mac_foot(mac_foot_s * foot);
+
+/* utils */
 static inline void print_mac_addr(const uint8_t addr[6]){
 	for(int i=0; i<6; i++){
 		printf("%x",addr[i]);
