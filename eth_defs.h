@@ -2,7 +2,7 @@
 #define ETH_DEFS_H
 #include <stdint.h>
 
-#define MAC_TPID (uint16_t) 0x8100
+#define MAC_TPID (uint16_t) 0x81
 
 /* IP protocol numbers */
 #define PROTOCOL_UDP (uint8_t) 0x11

@@ -117,7 +117,7 @@ mac_head_s *init_mac_head(
 	}else{
 		mac->tpid = 0;
 	}
-	mac->type = 0x0800; /* IPv4 */
+	mac->type = 0x08; /* IPv4 */
 	
 	print_mac_head(mac);
 

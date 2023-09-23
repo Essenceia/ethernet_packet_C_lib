@@ -10,6 +10,8 @@
 #include <time.h>
 #include <assert.h>
 
+#include "defs.h"
+
 /* Example of ascii dump : 
 
 > 0:00:00.265620 a130368b000000080060
@@ -30,7 +32,7 @@ encoding: HEX
 
 */
 
-#define DUMP_FILE "/tmp/network_dump.hex"
+#define DUMP_FILE "network_dump.hex"
 
 static FILE *fptr = NULL;
 
@@ -81,8 +83,10 @@ void dump_eth_packet(
 		tinfo->tm_sec,
 		ms);
 
-	for(size_t i=0; i<len; i++){
-		fprintf(fptr,"%x",buff[i]);
+	/* start dump after MAC reamble */
+	for(size_t i=8; i<len; i++){
+		fprintf(fptr,"%02x",buff[i]);
+		info("[%ld] %02x\n", i, buff[i]);
 	}
 	fprintf(fptr,"\n");
 }

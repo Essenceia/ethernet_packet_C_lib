@@ -78,14 +78,48 @@ uint8_t *write_eth_packet(eth_packet_s* pkt, size_t *len){
 	uint8_t *buff = malloc(sizeof(uint8_t)*buff_len);
 
 	memcpy(buff, mac_head_buff, mac_len);
+	#ifdef DEBUG
+	info("mac head buffer : \n");
+	for(int s=0; s<mac_len;s++){
+		info("[%d] %x\n",s,buff[s]);
+	}
+	#endif
+
 	size_t off = mac_len;
 	memcpy(buff+off, ipv4_head_buff, ipv4_len);
+	#ifdef DEBUG
+	info("ipv4 head buffer : \n");
+	for(int s=off; s<off+ipv4_len;s++){
+		info("[%d] %x\n",s,buff[s]);
+	}
+	#endif
+
 	off += ipv4_len;
 	memcpy(buff+off, trans_head_buff, trans_len);
+	#ifdef DEBUG
+	info("udp head buffer : \n");
+	for(int s=off; s<off+trans_len;s++){
+		info("[%d] %x\n",s,buff[s]);
+	}
+	#endif
+
 	off+= trans_len;
 	memcpy(buff+off, pkt->data, pkt->data_len);
+	#ifdef DEBUG
+	info("data buffer : \n");
+	for(int s=off; s<off+pkt->data_len;s++){
+		info("[%d] %x\n",s,buff[s]);
+	}
+	#endif
+
 	off += pkt->data_len;
 	memcpy(buff+off, mac_foot_buff, mac_foot_len);
+	#ifdef DEBUG
+	info("mac foot buffer : \n");
+	for(int s=off; s<off+mac_foot_len;s++){
+		info("[%d] %x\n",s,buff[s]);
+	}
+	#endif
 	off += mac_foot_len;
 
 	free(mac_head_buff);
@@ -94,6 +128,13 @@ uint8_t *write_eth_packet(eth_packet_s* pkt, size_t *len){
 	free(mac_foot_buff);
 
 	assert( off == (*len));
+
+	#ifdef DEBUG
+	info("buff len %ld\n", (*len));
+	for(int s=0; s<(*len); s++){
+		info("[%ld] %x\n",s,buff[s]);
+	}
+	#endif
 
 	return buff;				
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "dump.h"
+#include "defs.h"
 
 int main(){
 	uint8_t t[1] = {0};
@@ -33,6 +34,13 @@ int main(){
 	uint8_t *dump = write_eth_packet(
 			pkt,
 			&dump_len);
+
+	#ifdef DEBUG
+	info("dump:\nlen %ld\n",dump_len);
+	for(size_t s=0; s<dump_len;s++){
+		info("[%ld] %x\n",s, dump[s]);
+	} 
+	#endif
  
 	dump_eth_packet(
 		dump, 
@@ -40,6 +48,7 @@ int main(){
 		true);
 
 	free_eth_packet(pkt);
+	free(dump);
 
 	return 0;
 }
