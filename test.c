@@ -1,6 +1,7 @@
 #include "eth.h"
 #include <stdio.h>
 #include <assert.h>
+#include "dump.h"
 
 int main(){
 	uint8_t t[1] = {0};
@@ -26,6 +27,17 @@ int main(){
 		false);
 	
 	print_eth_packet(pkt);
+
+	/* dump packet to file */
+	size_t dump_len;
+	uint8_t *dump = write_eth_packet(
+			pkt,
+			&dump_len);
+ 
+	dump_eth_packet(
+		dump, 
+		dump_len, 
+		true);
 
 	free_eth_packet(pkt);
 

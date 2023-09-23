@@ -11,7 +11,7 @@ FLAGS = -std=gnu99 -Wall -Wextra -Wconversion -Wshadow -Wundef -fno-common  -Wno
 CC = cc $(if $(debug),-DDEBUG -g)
 LD = cc
 
-test : test.o eth.o mac.o ipv4.o udp.o tcp.o
+test : test.o eth.o mac.o ipv4.o udp.o tcp.o dump.o
 	$(LD) -o test -g $^
 
 test.o : test.c
@@ -32,8 +32,10 @@ udp.o: udp.c udp.h
 tcp.o: tcp.c tcp.h
 	$(CC) -c tcp.c $(FLAGS)
 
+dump.o: dump.c dump.h
+	$(CC) -c dump.c $(FLAGS)
 
-lib: eth_packet_s.o mac.o ipv4.o udp.o tcp.o
+lib: eth_packet_s.o mac.o ipv4.o udp.o tcp.o dump.o
 	ar rcs $(LIB_NAME) $^ 
 
 release: lib
@@ -44,5 +46,6 @@ release: lib
 clean:
 	-rm -f *.o	
 	-rm -f *.a	
+	-rm -f vgcore.*	
 	-rm -f test
 	-rm -fr $(RELEASE)
