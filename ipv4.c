@@ -5,6 +5,9 @@
 #include <string.h>
 #include <stdio.h>
 
+#define _BSD_SOURCE
+#include <endian.h>
+
 /* IPv4 */
 
 ipv4_head_s *read_ipv4_head(uint8_t *buff, size_t len){
@@ -37,20 +40,31 @@ uint8_t *write_ipv4_head(ipv4_head_s *head, size_t *len){
 	memset(buff, 0, *len);
 
 	/* copy at a bit level */
-	buff[0] |= (uint8_t)0xf & head->ver;	
-	buff[0] |= (uint8_t)0xf0 & ((uint8_t)head->ihl << 4);	
-	buff[1] |= (uint8_t)0x3f & head->dscp;	
-	buff[1] |= (uint8_t)0xc0 & ((uint8_t)head->ecn << 6);
-	memcpy(buff+2, &(head->tot_len), 2);	
-	memcpy(buff+4, &(head->id), 2);
-	buff[6] = (uint8_t)0x7 & ((uint8_t)head->flags);
-	buff[6] = (uint8_t)0xf8 & ((uint8_t)(head->frag_off<<3));
-	buff[7] = (uint8_t)0xff & ((uint32_t)(head->frag_off<<11));
+	buff[0] |= (uint8_t)0xf & head->ihl;	
+	buff[0] |= (uint8_t)0xf0 & ((uint8_t)head->ver << 4);	
+	buff[1] |= (uint8_t)0xfc & ((uint8_t)head->dscp<<2);	
+	buff[1] |= (uint8_t)0x03 & head->ecn;
+
+	uint16_t be_tot_len = htobe16(head->tot_len);
+	memcpy(buff+2, &be_tot_len, 2);	
+
+	uint16_t be_id = htobe16(head->id);
+	memcpy(buff+4, &be_id, 2);
+
+	buff[6] = (uint8_t)0e0 & ((uint8_t)head->flags << 5);
+	buff[6] = (uint8_t)0x1f & ((uint8_t)head->frag_off);
+	buff[7] = (uint8_t)0xff & ((uint32_t)(head->frag_off<<5));
 	buff[8] = head->ttl;
 	buff[9] = head->prot;
-	memcpy(buff+10, &(head->head_cs), 2);	
-	memcpy(buff+12, &(head->src_addr), 4);	
-	memcpy(buff+16, &(head->dst_addr), 4);
+
+	uint16_t be_cs = htobe16(head->head_cs);
+	memcpy(buff+10, &be_cs, 2);	
+
+	uint32_t be_src_addr = htobe32(head->src_addr);
+	memcpy(buff+12, &be_src_addr, 4);	
+	
+	uint32_t be_dst_addr = htobe32(head->dst_addr);
+	memcpy(buff+16, &be_dst_addr, 4);
 
 	return buff;	
 }

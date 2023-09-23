@@ -18,7 +18,7 @@ udp_head_s *read_udp_head(uint8_t *buff, size_t len){
 
 void set_udp_len(udp_head_s *head, size_t data_len){
 	assert(head);
-	head->len = (uint32_t)(UDP_HEAD_SIZE + data_len);			
+	head->len = (uint16_t)(UDP_HEAD_SIZE + data_len);			
 }
 
 uint8_t *write_udp_head(udp_head_s* head, size_t *len){
@@ -26,13 +26,19 @@ uint8_t *write_udp_head(udp_head_s* head, size_t *len){
 	*len = UDP_HEAD_SIZE;
 	uint8_t *buff = malloc(sizeof(uint8_t)*(*len));
 	memcpy(buff, head, (*len));
+	for(int i=0; i < 4; i++){
+		uint16_t tmp; 
+		memcpy(&tmp, buff+(i*2),sizeof(uint16_t));
+		tmp = htobe16(tmp);
+		memcpy(buff+(i*2),&tmp, sizeof(uint16_t));
+	}
 	return buff;	
 } 
 
 udp_head_s * init_udp_head(
-	const uint32_t src_port,
-	const uint32_t dst_port,
-	const uint32_t udp_data_len
+	const uint16_t src_port,
+	const uint16_t dst_port,
+	const uint16_t udp_data_len
 ){
 	udp_head_s *head;
 	head = malloc(sizeof(udp_head_s));
