@@ -86,7 +86,7 @@ ipv4_head_s *init_ipv4_head(
 	head->ihl = 5;
 	head->dscp = 0;
 	head->ecn = 0;
-	head->tot_len = (uint16_t)(((uint16_t)(head->ihl))*5) + (uint16_t)ip_data_len;
+	head->tot_len = (uint16_t)(5*4) + (uint16_t)ip_data_len;
 	head->id = 0;
 	head->flags = 1;
 	head->frag_off = 0;
