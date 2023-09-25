@@ -15,4 +15,7 @@
 #define info(...)
 #endif
 
+/* offset off
+ * used to get the offset of an ellement in a structure */
+#define OFFOF(type, member) ((size_t) (&(((type *) 0)->member)))
 #endif

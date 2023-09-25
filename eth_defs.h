@@ -19,6 +19,8 @@
 
 #define UDP_HEAD_SIZE (size_t) 8
 
+#define TCP_HEAD_SIZE (size_t) 20
+
 /* default values */
 #define DEFAULT_DST_MAC ((uint8_t[6]) { 0xFC, 0xFC, 0x48, 0, 0, 0})
 #define DEFAULT_SRC_MAC ((uint8_t[6]) { 0x00, 0x00, 0x01, 0, 0, 0})
