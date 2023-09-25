@@ -1,3 +1,10 @@
+/* Copyright (c) 2023, Julia Desmazes. All rights reserved.
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial
+ * 4.0 International License.
+ *
+ * This code is provided "as is" without any express or implied warranties. */
+
 #include "tcp.h"
 
 #include <assert.h>
@@ -92,4 +99,18 @@ uint8_t *write_tcp_head(tcp_head_s *head, size_t *len){
 	(*len) = off;
 	return buff;	
 }
+
+tcp_head_s * init_tcp_head(
+	const uint16_t scr_port,
+	const uint16_t dst_port,
+	const uint16_t data_len
+){
+	tcp_head_s * head = malloc(sizeof(tcp_head_s));
+	memset(head, 0, sizeof(tcp_head_s));
+
+	head->src_port = src_port;
+	head->dst_port = dst_port;
+
+}	
+
 

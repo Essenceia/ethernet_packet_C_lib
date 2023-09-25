@@ -1,5 +1,13 @@
 #ifndef ETH_DEFS_H
 #define ETH_DEFS_H
+
+/* Copyright (c) 2023, Julia Desmazes. All rights reserved.
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial
+ * 4.0 International License.
+ *
+ * This code is provided "as is" without any express or implied warranties. */
+
 #include <stdint.h>
 
 #define MAC_TPID (uint16_t) 0x81
