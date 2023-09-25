@@ -1,5 +1,11 @@
 #include "tcp.h"
 
+#include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "eth_defs.h"
+#include "defs.h"
 
 tcp_head_s *read_tcp_head(uint8_t *buff, size_t len){
 	assert(buff);
@@ -24,6 +30,9 @@ tcp_head_s *read_tcp_head(uint8_t *buff, size_t len){
 	/* data off */
 	memcpy(&(head->data_off), buff+off, sizeof(uint8_t));
 	off += sizeof(uint8_t);
+
+	/* reserved: allways 0 */
+	head->res = 0;
 
 	/* 1 bit wide parameters */
 	uint8_t tmp;
@@ -71,11 +80,11 @@ uint8_t *write_tcp_head(tcp_head_s *head, size_t *len){
 		      |(head->syn << 6)	
 		      |(head->fin << 7);
 	off += 1;
-	memcpy(buff+off, &(head->win_size),sizeof(uint16_t);
+	memcpy(buff+off, &(head->win_size),sizeof(uint16_t));
 	off += sizeof(uint16_t);
-	memcpy(buff+off, &(head->cs),sizeof(uint16_t);
+	memcpy(buff+off, &(head->cs),sizeof(uint16_t));
 	off += sizeof(uint16_t);
-	memcpy(buff+off, &(head->urg_ptr),sizeof(uint16_t);
+	memcpy(buff+off, &(head->urg_ptr),sizeof(uint16_t));
 	off += sizeof(uint16_t);
 
 	assert(off == TCP_HEAD_SIZE);

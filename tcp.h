@@ -1,6 +1,10 @@
 #ifndef TCP_H
 #define TCP_H
 
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+
 /* tcp */
 typedef struct{
 	uint16_t src_port;
@@ -8,7 +12,7 @@ typedef struct{
 	uint32_t seq_num;
 	uint32_t ack_num;
 	uint8_t data_off; /* 4 bits */
-	const uint8_t res = 0; /* 4 bits : reserved 0000 */
+	uint8_t res; /* 4 bits : reserved 0000 */
 	bool cwr;
 	bool ece;
 	bool urg;
