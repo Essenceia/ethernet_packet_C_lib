@@ -10,6 +10,7 @@
 #include <assert.h>
 #include "dump.h"
 #include "defs.h"
+#include <stdlib.h>
 
 int main(){
 	uint8_t t[1] = {0};

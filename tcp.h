@@ -41,16 +41,8 @@ typedef struct{
 	uint16_t dst_port;
 	uint32_t seq_num;
 	uint32_t ack_num;
-	uint8_t data_off; /* 4 bits */
-	uint8_t res; /* 4 bits : reserved 0000 */
-	bool cwr;
-	bool ece;
-	bool urg;
-	bool ack;
-	bool psh;
-	bool rst;
-	bool syn;
-	bool fin;
+	uint8_t data_off; /* date offset bits are in 4 msb position */
+	uint8_t flags;
 	uint16_t win_size; 
 	uint16_t cs;
 	uint16_t urg_ptr; 
@@ -61,11 +53,11 @@ tcp_head_s *read_tcp_head(uint8_t *buff, size_t len);
 uint8_t *write_tcp_head(tcp_head_s *head, size_t *len);
 
 tcp_head_s * init_tcp_head(
-	const uint16_t scr_port,
+	const uint16_t src_port,
 	const uint16_t dst_port,
 	const uint16_t data_len,
-	const bool syn,
-	const bool ack );	
+	const uint8_t flags
+);	
 
 void print_tcp_head(tcp_head_s * head);
 #endif //TCP_H
