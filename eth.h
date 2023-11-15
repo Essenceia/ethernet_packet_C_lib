@@ -42,10 +42,10 @@ uint8_t *write_eth_packet(eth_packet_s* eth, size_t *len);
 eth_packet_s *init_eth_packet(
 	const uint8_t dst_mac[6],
 	const uint8_t src_mac[6],
-	const uint64_t src_ip,
-	const uint64_t dst_ip,
-	const uint32_t src_port,
-	const uint32_t dst_port, 
+	const uint32_t src_ip,
+	const uint32_t dst_ip,
+	const uint16_t src_port,
+	const uint16_t dst_port, 
 	const bool vtag);
 
 /* update application data */

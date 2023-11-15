@@ -11,11 +11,17 @@
 #include "dump.h"
 #include "defs.h"
 #include <stdlib.h>
+#include <time.h>
+#include <stdlib.h>
+
+#define PKT_LEN_MAX 1800
+#define PKT_LEN_MIN 30
+#define NODE_CNT 2
+#define PKT_CNT 100
 
 int main(){
 	uint8_t t[1] = {0};
 
-	eth_packet_s *pkt;	
 
 	printf("Running test\n");
 	
@@ -25,37 +31,61 @@ int main(){
 
 	printf("PASS: data { 0 } crc result : %08x\n", crc);
 
-	/* create packet */
-	pkt = init_eth_packet(
-		DEFAULT_DST_MAC,
-		DEFAULT_SRC_MAC,
-		DEFAULT_SRC_IP,
-		DEFAULT_DST_IP,
-		DEFAULT_SRC_PORT,
-		DEFAULT_DST_PORT,
-		false);
+	/* create node structs */
 	
-	print_eth_packet(pkt);
+	eth_packet_s *node[NODE_CNT];	
 
-	/* dump packet to file */
+	for(int i=0; i < NODE_CNT; i++){
+		node[i] = init_eth_packet(
+			( i % 2) ? DEFAULT_DST_MAC: DEFAULT_SRC_MAC ,
+			( i % 2) ? DEFAULT_SRC_MAC: DEFAULT_DST_MAC,
+			( i % 2) ? DEFAULT_SRC_IP: DEFAULT_DST_IP ,
+			( i % 2) ? DEFAULT_DST_IP: DEFAULT_SRC_IP ,
+			( i % 2) ? DEFAULT_SRC_PORT: DEFAULT_DST_PORT,
+			( i % 2) ? DEFAULT_DST_PORT: DEFAULT_SRC_PORT,
+			false);
+		print_eth_packet(node[i]);
+	}
+	/* fill packets and dump packet to file */
+	uint8_t data[PKT_LEN_MAX];
+	size_t data_len;
 	size_t dump_len;
-	uint8_t *dump = write_eth_packet(
-			pkt,
-			&dump_len);
-
-	#ifdef DEBUG
-	info("dump:\nlen %ld\n",dump_len);
-	for(size_t s=0; s<dump_len;s++){
-		info("[%ld] %x\n",s, dump[s]);
-	} 
-	#endif
- 
-	dump_eth_packet(
-		dump, 
-		dump_len, 
-		true);
-
-	free_eth_packet(pkt);
+	uint8_t *dump;
+	
+	srand((unsigned int)time(NULL));   
+	int r;
+	int n;
+	for(int i=0; i<PKT_CNT; i++){
+		r = rand();
+		/* randomly select a node */
+		n = r % NODE_CNT;
+		/* fill packet with fake data */
+		data_len = (size_t)(n % (PKT_LEN_MAX-PKT_LEN_MIN) + PKT_LEN_MIN);
+		for(size_t l=0; l < data_len; l++){
+			/* TODO: fill with macbeth */
+			data[l] = (uint8_t) rand();
+		}	
+		/* update node packet content */
+		update_eth_packet_data(node[n],data, data_len);
+		/* dump */
+		dump = write_eth_packet(
+				node[n],
+				&dump_len);
+		#ifdef DEBUG
+		info("dump:\nlen %ld\n",dump_len);
+		for(size_t s=0; s<dump_len;s++){
+			info("[%ld] %x\n",s, dump[s]);
+		} 
+		#endif
+		dump_eth_packet(
+			dump, 
+			dump_len, 
+			true);
+	}
+	
+	for(int i=0; i<NODE_CNT; i++)
+		free_eth_packet(node[n]);
+		
 	free(dump);
 
 	return 0;

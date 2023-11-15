@@ -149,10 +149,10 @@ uint8_t *write_eth_packet(eth_packet_s* pkt, size_t *len){
 eth_packet_s *init_eth_packet(
 	const uint8_t dst_mac[6],
 	const uint8_t src_mac[6],
-	const uint64_t src_ip,
-	const uint64_t dst_ip,
-	const uint32_t src_port,
-	const uint32_t dst_port, 
+	const uint32_t src_ip,
+	const uint32_t dst_ip,
+	const uint16_t src_port,
+	const uint16_t dst_port, 
 	const bool vtag
 ){
 	info("Init eth packet");
@@ -179,7 +179,7 @@ eth_packet_s *init_eth_packet(
 	/* UDP head */
 	eth->udp_head = init_udp_head(src_port,
 								  dst_port,
-								  (uint32_t)data_len);
+								  (uint16_t)data_len);
 	/* MAC foot */
 	eth->mac_foot = init_mac_foot();
 
@@ -187,6 +187,18 @@ eth_packet_s *init_eth_packet(
 
 	return eth;
 }
+/* update application data */
+void update_eth_packet_data(
+	eth_packet_s *eth, 
+	uint8_t *app_data, 
+	size_t app_data_len){
+	/*TODO*/
+	/* copy data */
+	/* update udp */
+	/* update ipv4 */
+	/* update mac */
+}
+
 
 void update_eth_packet_crc(eth_packet_s *eth){
 	/* translate packet into contents into uint8_t buffer */
