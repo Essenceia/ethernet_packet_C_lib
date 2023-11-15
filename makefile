@@ -38,6 +38,9 @@ dump.o: dump.c dump.h
 lib: eth_packet_s.o mac.o ipv4.o udp.o tcp.o dump.o
 	ar rcs $(LIB_NAME) $^ 
 
+valgrind: test
+	valgrind --leak-check=full --track-origins=yes ./test	
+
 release: lib
 	mkdir -p $(RELEASE)/$(INC)
 	cp $(LIB_NAME) $(RELEASE)/.

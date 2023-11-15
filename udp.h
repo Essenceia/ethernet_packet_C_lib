@@ -12,7 +12,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-/* udp */
+/* udp header 
+ * The UDP header CS field is optional, we don not fill it, 
+ * unused value is 0 */
 typedef struct{
 	uint16_t src_port;
 	uint16_t dst_port;

@@ -17,7 +17,7 @@
 #define PKT_LEN_MAX 1800
 #define PKT_LEN_MIN 30
 #define NODE_CNT 2
-#define PKT_CNT 100
+#define PKT_CNT 10
 
 int main(){
 	uint8_t t[1] = {0};
@@ -56,11 +56,14 @@ int main(){
 	int r;
 	int n;
 	for(int i=0; i<PKT_CNT; i++){
+		#ifdef DEBUG
+		printf("creating packet %d\n",i);
+		#endif
 		r = rand();
 		/* randomly select a node */
 		n = r % NODE_CNT;
 		/* fill packet with fake data */
-		data_len = (size_t)(n % (PKT_LEN_MAX-PKT_LEN_MIN) + PKT_LEN_MIN);
+		data_len = (size_t)(r % (PKT_LEN_MAX-PKT_LEN_MIN) + PKT_LEN_MIN);
 		for(size_t l=0; l < data_len; l++){
 			/* TODO: fill with macbeth */
 			data[l] = (uint8_t) rand();
@@ -73,20 +76,22 @@ int main(){
 				&dump_len);
 		#ifdef DEBUG
 		info("dump:\nlen %ld\n",dump_len);
-		for(size_t s=0; s<dump_len;s++){
-			info("[%ld] %x\n",s, dump[s]);
-		} 
+		//for(size_t s=0; s<dump_len;s++){
+		//	info("[%ld] %x\n",s, dump[s]);
+		//} 
 		#endif
 		dump_eth_packet(
 			dump, 
 			dump_len, 
 			true);
+		free(dump);
 	}
 	
 	for(int i=0; i<NODE_CNT; i++)
-		free_eth_packet(node[n]);
-		
-	free(dump);
+		free_eth_packet(node[i]);
 
+	close_dump();
+	
+	printf("End of test\n");
 	return 0;
 }

@@ -105,6 +105,11 @@ ipv4_head_s *init_ipv4_head(
 
 	return head;
 }
+void update_ipv4_header_data_len(ipv4_head_s* head, size_t ip_data_len){
+	assert(head);
+	head->tot_len = (uint16_t)(5*4) + (uint16_t)ip_data_len;
+	head->head_cs = calculate_ipv4_header_checksum(head);
+}
 
 uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
 	uint16_t sum = 0;

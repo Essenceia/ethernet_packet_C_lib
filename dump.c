@@ -97,3 +97,8 @@ void dump_eth_packet(
 	}
 	fprintf(fptr,"\n");
 }
+
+void close_dump(){
+	if(fptr)
+		fclose(fptr);
+}

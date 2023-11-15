@@ -17,4 +17,6 @@ void dump_eth_packet(
 	const size_t len,
 	const bool inbound
 );
+
+void close_dump();
 #endif //DUMP_H

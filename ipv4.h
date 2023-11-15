@@ -42,6 +42,10 @@ ipv4_head_s *init_ipv4_head(
 	const size_t ip_data_len,
 	const uint8_t protocol
 );
+
+/* update data length and recalculate cs */
+void update_ipv4_header_data_len(ipv4_head_s* head, size_t ip_data_len);
+
 /* calculate header checksum */
 uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head);
 
