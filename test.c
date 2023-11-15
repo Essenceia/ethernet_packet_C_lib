@@ -46,6 +46,7 @@ int main(){
 			false);
 		print_eth_packet(node[i]);
 	}
+
 	/* fill packets and dump packet to file */
 	uint8_t data[PKT_LEN_MAX];
 	size_t data_len;

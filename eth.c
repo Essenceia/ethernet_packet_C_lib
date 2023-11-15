@@ -193,14 +193,14 @@ eth_packet_s *init_eth_packet(
 void update_eth_packet_data(
 	eth_packet_s *eth, 
 	uint8_t *app_data, 
-	size_t app_data_len){
+	size_t app_data_len)
+{
 	assert(eth);
-	if(app_data_len)
-		assert(app_data);
-	/*TODO*/
+	
 	/* copy data */
 	if(app_data_len){
-		if(eth->data){
+		assert(app_data);
+		if (!eth->data){
 			/* allocate if data has never been allocated */
 			eth->data = malloc(app_data_len);
 		}else{
@@ -209,6 +209,7 @@ void update_eth_packet_data(
 		memcpy(eth->data, app_data, app_data_len);
 	}
 	eth->data_len = app_data_len;
+
 	/* update udp 
  	 * modify data len, cs is optional and unused */
 	set_udp_len(eth->udp_head, eth->data_len);
@@ -216,8 +217,7 @@ void update_eth_packet_data(
 	size_t payload_len = app_data_len + UDP_HEAD_SIZE;
 	update_ipv4_header_data_len(eth->ipv4_head, payload_len);
 	/* update mac */
-	update_eth_packet_crc(eth);
-	
+	update_eth_packet_crc(eth);	
 }
 
 
