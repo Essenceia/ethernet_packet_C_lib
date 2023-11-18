@@ -1,7 +1,7 @@
 DOC_DIR=doc
 RELEASE=release
 INC=inc
-LIB_NAME=lib_eth.a
+LIB_NAME=libeth.a
 
 ifndef debug
 debug:=
@@ -35,7 +35,7 @@ tcp.o: tcp.c tcp.h
 dump.o: dump.c dump.h
 	$(CC) -c dump.c $(FLAGS)
 
-lib: eth_packet_s.o mac.o ipv4.o udp.o tcp.o dump.o
+lib: eth.o mac.o ipv4.o udp.o tcp.o dump.o
 	ar rcs $(LIB_NAME) $^ 
 
 valgrind: test

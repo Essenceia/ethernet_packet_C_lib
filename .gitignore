@@ -2,3 +2,5 @@
 test
 vgcore.*
 *.hex
+release
+*.a
