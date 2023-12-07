@@ -151,3 +151,8 @@ void print_ipv4_head(ipv4_head_s *head){
 	printf("\n}\n");
 }
 
+size_t get_ipv4_head_len(ipv4_head_s* head){
+	/* doesn't have support for options yet, size is allways the same */
+	return IP_HEAD_BASE_SIZE;
+
+}

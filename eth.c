@@ -261,4 +261,23 @@ void print_eth_packet(eth_packet_s * eth){
 	/* footer */
 	print_mac_foot(eth->mac_foot);
 }
+bool is_udp(eth_packet_s *eth){
+	assert(eth);
+	return (eth->ipv4_head->prot == PROTOCOL_UDP);
+}
+
+size_t get_head_len(eth_packet_s *eth){
+	assert(eth);
+	size_t len;
+	/* get packet head len */
+	len = get_mac_head_len(eth->mac_head)
+		+ get_ipv4_head_len(eth->ipv4_head);
+	if(is_udp(eth)){
+		len += UDP_HEAD_SIZE; 
+	}else{
+		/* TODO: add support for tcp */
+		assert(0);
+	}
+	return len;
+}
 
