@@ -68,7 +68,7 @@ void dump_eth_packet(
 	fprintf(fptr,"%c ", dir);
 
 	/* write time */
-	 long            ms; // Milliseconds
+	long            ms; // Milliseconds
     time_t          s;  // Seconds
     struct timespec spec;
 
@@ -90,7 +90,7 @@ void dump_eth_packet(
 		tinfo->tm_sec,
 		ms);
 
-	/* start dump after MAC reamble */
+	/* start dump after MAC preamble */
 	for(size_t i=8; i<len; i++){
 		fprintf(fptr,"%02x",buff[i]);
 		info("[%ld] %02x\n", i, buff[i]);

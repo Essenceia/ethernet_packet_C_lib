@@ -14,6 +14,9 @@
 #include <string.h>
 #include <stdio.h>
 
+#define _BSD_SOURCE             /* See feature_test_macros(7) */
+#include <endian.h>
+
 /* MAC 
  * header */
 mac_head_s *read_mac_head(uint8_t *buff, size_t len){
@@ -34,6 +37,7 @@ mac_head_s *read_mac_head(uint8_t *buff, size_t len){
 	}
 	return head;
 }
+/* flatten mac header content and set correct endianness */
 uint8_t *write_mac_head(mac_head_s *head, size_t *len){
 	assert(head);
 
@@ -41,19 +45,25 @@ uint8_t *write_mac_head(mac_head_s *head, size_t *len){
 	*len = get_mac_head_len(head);
 	uint8_t *buff = malloc(sizeof(uint8_t)*(*len));
 
-	/* copy head up until tag/type */
+	/* copy preamble, src and dst address into buffer  */
 	memcpy(buff, head, MAC_HEAD_BASE_LITE_SIZE);
+	
+	/* add type indenpendantly as we need to set correct endianness*/
+	uint16_t type_be = htobe16(head->type);
+	uint16_t tpid_be = htobe16(head->tpid);
+	uint16_t tci_be = htobe16(head->tci);
+
+	size_t off = MAC_HEAD_BASE_LITE_SIZE;	
 	if(mac_has_tag(head)){
 		/* has tag */
-		memcpy(buff+MAC_HEAD_BASE_LITE_SIZE,
-			((uint8_t*)head)+MAC_HEAD_BASE_LITE_SIZE,
-			6);	
-	}else{
-		/* doesn't have tag, only has type */
-		memcpy(buff+MAC_HEAD_BASE_LITE_SIZE,
-			&(head->type),
-			2);
+		memcpy(buff+off, &tpid_be, sizeof(uint16_t));	
+		off += sizeof(uint16_t);
+		memcpy(buff+off, &tci_be, sizeof(uint16_t));	
+		off += sizeof(uint16_t);
 	}
+	/* write type type */
+	memcpy(buff+off, &type_be, sizeof(uint16_t));	
+	
 	return buff;
 }
 
@@ -124,7 +134,8 @@ mac_head_s *init_mac_head(
 	}else{
 		mac->tpid = 0;
 	}
-	mac->type = 0x08; /* IPv4 */
+	/* IPv4 */
+	mac->type = 0x0800;
 	
 	print_mac_head(mac);
 
