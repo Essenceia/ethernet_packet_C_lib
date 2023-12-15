@@ -214,7 +214,7 @@ void update_eth_packet_data(
  	 * modify data len, cs is optional and unused */
 	set_udp_len(eth->udp_head, eth->data_len);
 	/* update ipv4 */
-	size_t payload_len = app_data_len + UDP_HEAD_SIZE;
+	size_t payload_len = eth->data_len + UDP_HEAD_SIZE;
 	update_ipv4_header_data_len(eth->ipv4_head, payload_len);
 	/* update mac */
 	update_eth_packet_crc(eth);	

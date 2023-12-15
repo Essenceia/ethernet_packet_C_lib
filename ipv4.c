@@ -16,7 +16,6 @@
 #include <endian.h>
 
 /* IPv4 */
-
 ipv4_head_s *read_ipv4_head(uint8_t *buff, size_t len){
 	assert(buff);
 	assert(len >= IP_HEAD_BASE_SIZE ); /* minumum lenght for ipv4 header */
@@ -52,14 +51,14 @@ uint8_t *write_ipv4_head(ipv4_head_s *head, size_t *len){
 	buff[1] |= (uint8_t)0xfc & ((uint8_t)head->dscp<<2);	
 	buff[1] |= (uint8_t)0x03 & head->ecn;
 
-	uint16_t be_tot_len = htobe16(head->tot_len);
-	memcpy(buff+2, &be_tot_len, 2);	
+	uint16_t tot_len_be = htobe16(head->tot_len);
+	memcpy(buff+2, &tot_len_be, 2);	
 
-	uint16_t be_id = htobe16(head->id);
-	memcpy(buff+4, &be_id, 2);
+	uint16_t id_be = htobe16(head->id);
+	memcpy(buff+4, &id_be, 2);
 
-	buff[6] = (uint8_t)0e0 & ((uint8_t)head->flags << 5);
-	buff[6] = (uint8_t)0x1f & ((uint8_t)head->frag_off);
+	buff[6] = (uint8_t)head->flags << 5;
+	buff[6] |= (uint8_t)0x1f & ((uint8_t)head->frag_off);
 	buff[7] = (uint8_t)0xff & ((uint32_t)(head->frag_off<<5));
 	buff[8] = head->ttl;
 	buff[9] = head->prot;
@@ -93,9 +92,18 @@ ipv4_head_s *init_ipv4_head(
 	head->ihl = 5;
 	head->dscp = 0;
 	head->ecn = 0;
+	/* Total Length is the length of the datagram, measured in octets,
+       including internet header and data. */
 	head->tot_len = (uint16_t)(5*4) + (uint16_t)ip_data_len;
+	printf("ipv4 total length %u = 20 + %u\n", head->tot_len, ip_data_len);
+
 	head->id = 0;
-	head->flags = 1;
+	/* Fragmentation flags :	
+ 	 * Bit 0: reserved, must be zero
+     * Bit 1: (DF) 0 = May Fragment,  1 = Don't Fragment.
+     * Bit 2: (MF) 0 = Last Fragment, 1 = More Fragments. 
+     * set as "don't fragment" */
+	head->flags = 2; 
 	head->frag_off = 0;
 	head->ttl = 64;
 	head->prot = protocol;
@@ -109,6 +117,11 @@ void update_ipv4_header_data_len(ipv4_head_s* head, size_t ip_data_len){
 	assert(head);
 	head->tot_len = (uint16_t)(5*4) + (uint16_t)ip_data_len;
 	head->head_cs = calculate_ipv4_header_checksum(head);
+
+	#ifdef DEBUG
+	printf("[update] ipv4 total length %u = 20 + %u\n", head->tot_len, ip_data_len);
+	print_ipv4_head(head);
+	#endif
 }
 
 uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
@@ -136,7 +149,7 @@ void print_ipv4_head(ipv4_head_s *head){
 	printf("\tihl : %x\n",head->ihl);
 	printf("\tdscp : %x\n",head->dscp);
 	printf("\tecn : %x\n",head->ecn);
-	printf("\ttot len : %u\n",head->tot_len);
+	printf("\ttot len : %u (0x%x)\n",head->tot_len, head->tot_len);
 	printf("\tid : %u\n",head->id);
 	printf("\tflags : %x\n",head->flags);
 	printf("\tflag off : %u\n",head->frag_off);

@@ -76,10 +76,7 @@ int main(){
 				node[n],
 				&dump_len);
 		#ifdef DEBUG
-		info("dump:\nlen %ld\n",dump_len);
-		//for(size_t s=0; s<dump_len;s++){
-		//	info("[%ld] %x\n",s, dump[s]);
-		//} 
+		print_eth_packet(node[n]);
 		#endif
 		dump_eth_packet(
 			dump, 
