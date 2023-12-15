@@ -124,20 +124,21 @@ void update_ipv4_header_data_len(ipv4_head_s* head, size_t ip_data_len){
 	#endif
 }
 
+
 uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
 	uint16_t sum = 0;
-	sum += (uint16_t)((uint16_t)(head->ecn)  << 14 )
-		 | ((uint16_t)(head->dscp) << 8 )
-		 | ((uint16_t)(head->ihl)  << 4 )
-		 |  (uint16_t)(head->ver);
+	sum += (uint16_t)(head->ecn) 
+		 | (uint16_t)(head->dscp << 2)
+		 | (uint16_t)(head->ihl  << 8)
+		 | (uint16_t)(head->ver  << 12);
 	sum += head->tot_len;
 	sum += head->id;
-	sum += (uint16_t)(head->flags)
-		 | ((uint16_t)(head->frag_off) << 2);
-	sum += (uint16_t)(head->ttl)
-		 | ((uint16_t)(head->prot)<<8);
+	sum += (uint16_t)(head->flags << 13)
+		 | (uint16_t)head->frag_off;
+	sum += (uint16_t)(head->ttl << 8)
+		 | (uint16_t)(head->prot);
 	sum += (uint16_t)(head->src_addr);	
-	sum += (uint16_t)((uint16_t)(head->src_addr)>>16);	
+	sum += (uint16_t)(head->src_addr >>16);	
 	sum += (uint16_t)(head->dst_addr);	
 	sum += (uint16_t)(head->dst_addr>>16);
 	return sum;	
