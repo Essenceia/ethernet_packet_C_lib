@@ -46,6 +46,13 @@ release: lib
 	cp $(LIB_NAME) $(RELEASE)/.
 	cp *.h $(RELEASE)/$(INC)
 
+# rule to update eth lib in network 
+# stack tb 
+VPI_INC_DIR := ~/rtl/hft/ethernet/tb/vpi/inc
+update: release
+	cp $(RELEASE)/$(LIB_NAME) $(VPI_INC_DIR)/.
+	cp $(RELEASE)/$(INC)/* $(VPI_INC_DIR)/.
+
 clean:
 	-rm -f *.o	
 	-rm -f *.a	
