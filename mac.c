@@ -91,9 +91,10 @@ mac_foot_s *read_mac_foot(uint8_t *buff, size_t len){
 }
 uint8_t *write_mac_foot(mac_foot_s *foot, size_t *len){
 	assert(foot);
-	*len = MAC_FOOT_SIZE;
+	*len = MAC_FOOT_SIZE; // 32b 
+	uint32_t crc_be = htobe32(foot->crc);
 	uint8_t *buff = malloc(sizeof(uint8_t)*(*len));
-	memcpy( buff, foot, sizeof(uint8_t)*(*len));
+	memcpy( buff, &crc_be, sizeof(uint8_t)*(*len));
 	return buff;
 }
 
@@ -101,6 +102,9 @@ uint8_t *write_mac_foot(mac_foot_s *foot, size_t *len){
 uint32_t calculate_crc(uint8_t *buff, size_t len){
 	uint32_t crc = 0xffffffff;
 	uint32_t b; 
+	#ifdef DEBUG
+	printf("MAC CRC\n");
+	#endif
 	for (size_t j=0; j<len; j++){
 		b = (uint32_t)buff[j];
 		crc ^= b << 24;
@@ -111,7 +115,13 @@ uint32_t calculate_crc(uint8_t *buff, size_t len){
 				crc <<= 1;
 			}
 		}
+		#ifdef DEBUG
+		printf("j : %ld, b : 0x%02x, crc 0x%08x\n",j,b,crc);
+		#endif
 	}
+	#ifdef DEBUG
+	printf("crc32 : 0x%08x\n",crc);
+	#endif
 	return crc;
 }
 
