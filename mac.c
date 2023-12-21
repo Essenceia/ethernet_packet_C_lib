@@ -140,7 +140,7 @@ mac_head_s *init_mac_head(
 	memcpy(mac->src_addr, src_addr, 6);
 	if ( vtag ){
 		mac->tpid = MAC_TPID;
-		mac->tci = MAC_TCI;
+		mac->tci = DEFAULT_TCI_MAC;
 	}else{
 		mac->tpid = 0;
 	}

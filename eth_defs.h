@@ -33,7 +33,7 @@
 /* default values */
 #define DEFAULT_DST_MAC ((uint8_t[6]) { 0xFC, 0xFC, 0x48, 0, 0, 0})
 #define DEFAULT_SRC_MAC ((uint8_t[6]) { 0x00, 0x00, 0x01, 0, 0, 0})
-#define DEFAULT_MAC_TCI  (uint16_t) 0xaa /* vlan id = 170, tci = 0, dei = 0*/
+#define DEFAULT_TCI_MAC  (uint16_t) 0xaa /* vlan id = 170, tci = 0, dei = 0*/
 #define DEFAULT_DST_IP (uint32_t) 0x0
 #define DEFAULT_SRC_IP (uint32_t) 0x1
 #define DEFAULT_DST_PORT (uint16_t) 18070
