@@ -93,7 +93,6 @@ void dump_eth_packet(
 	/* start dump after MAC preamble */
 	for(size_t i=8; i<len; i++){
 		fprintf(fptr,"%02x",buff[i]);
-		info("[%ld] %02x\n", i, buff[i]);
 	}
 	fprintf(fptr,"\n");
 }

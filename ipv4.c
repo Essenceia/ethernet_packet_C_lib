@@ -95,7 +95,6 @@ ipv4_head_s *init_ipv4_head(
 	/* Total Length is the length of the datagram, measured in octets,
        including internet header and data. */
 	head->tot_len = (uint16_t)(5*4) + (uint16_t)ip_data_len;
-	printf("ipv4 total length %u = 20 + %u\n", head->tot_len, ip_data_len);
 
 	head->id = 0;
 	/* Fragmentation flags :	
@@ -120,7 +119,6 @@ void update_ipv4_header_data_len(ipv4_head_s* head, size_t ip_data_len){
 
 	#ifdef DEBUG
 	printf("[update] ipv4 total length %u = 20 + %u\n", head->tot_len, ip_data_len);
-	print_ipv4_head(head);
 	#endif
 }
 

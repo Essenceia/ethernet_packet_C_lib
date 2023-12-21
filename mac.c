@@ -102,7 +102,7 @@ uint8_t *write_mac_foot(mac_foot_s *foot, size_t *len){
 uint32_t calculate_crc(uint8_t *buff, size_t len){
 	uint32_t crc = 0xffffffff;
 	uint32_t b; 
-	#ifdef DEBUG
+	#ifdef DEBUG_CRC
 	printf("MAC CRC\n");
 	#endif
 	for (size_t j=0; j<len; j++){
@@ -115,11 +115,11 @@ uint32_t calculate_crc(uint8_t *buff, size_t len){
 				crc <<= 1;
 			}
 		}
-		#ifdef DEBUG
+		#ifdef DEBUG_CRC
 		printf("j : %ld, b : 0x%02x, crc 0x%08x\n",j,b,crc);
 		#endif
 	}
-	#ifdef DEBUG
+	#ifdef DEBUG_CRC
 	printf("crc32 : 0x%08x\n",crc);
 	#endif
 	return crc;
@@ -139,20 +139,14 @@ mac_head_s *init_mac_head(
 	memcpy(mac->dst_addr, dst_addr, 6);
 	memcpy(mac->src_addr, src_addr, 6);
 	if ( vtag ){
-		mac->tpid = 0x8100;
-		mac->tci = 0;
+		mac->tpid = MAC_TPID;
+		mac->tci = MAC_TCI;
 	}else{
 		mac->tpid = 0;
 	}
 	/* IPv4 */
-	mac->type = 0x0800;
+	mac->type = MAC_TYPE;
 	
-	print_mac_head(mac);
-
-	#ifdef DEBUG
-	print_mac_head(mac);
-	#endif
-
 	return mac; 
 }
 
@@ -174,7 +168,7 @@ void print_mac_head(mac_head_s *head){
 	printf("\n");
 	if ( mac_has_tag(head)){
 		printf("\ttpid : %x\n",head->tpid);
-		printf("\ttpid : %x\n",head->tpid);
+		printf("\ttci  : %x\n",head->tci);
 	}
 	printf("\ttype : %x\n}\n",head->type);
 }

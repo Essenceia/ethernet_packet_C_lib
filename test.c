@@ -16,8 +16,8 @@
 
 #define PKT_LEN_MAX 1800
 #define PKT_LEN_MIN 30
-#define NODE_CNT 2
-#define PKT_CNT 10
+#define NODE_CNT 4
+#define PKT_CNT 20
 
 int main(){
 	uint8_t t[1] = {0};
@@ -43,7 +43,8 @@ int main(){
 			( i % 2) ? DEFAULT_DST_IP: DEFAULT_SRC_IP ,
 			( i % 2) ? DEFAULT_SRC_PORT: DEFAULT_DST_PORT,
 			( i % 2) ? DEFAULT_DST_PORT: DEFAULT_SRC_PORT,
-			false);
+			(i % 2) ? true: false );
+		printf("------\nnode %d\n\n",i);
 		print_eth_packet(node[i]);
 	}
 
