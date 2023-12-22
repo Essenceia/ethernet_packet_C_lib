@@ -138,7 +138,8 @@ void update_ipv4_header_data_len(ipv4_head_s* head, size_t ip_data_len){
  * |                    Options                    |    Padding    |
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
 uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
-	uint16_t sum = 0;
+	uint16_t res;
+	uint32_t sum = 0;	
 	sum += (head->ecn & 0x3);
 	sum += (head->dscp & 0x3f)<< 2;
 	sum += (head->ihl & 0xf) << 8;
@@ -153,9 +154,12 @@ uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
 	sum += head->src_addr & 0xffff;	
 	sum += (head->dst_addr & 0xffff0000)>>16;
 	sum += head->dst_addr & 0xffff;	
-
+	 /*  Fold 32-bit sum to 16 bits */
+    while (sum>>16)
+        sum = (sum & 0xffff) + (sum >> 16);
 	/* one's complement of the sum */
-	return ~sum;	
+	res = (uint16_t) ~sum;
+	return res;	
 }
 
 void print_ipv4_head(ipv4_head_s *head){
