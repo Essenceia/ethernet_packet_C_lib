@@ -121,25 +121,41 @@ void update_ipv4_header_data_len(ipv4_head_s* head, size_t ip_data_len){
 	printf("[update] ipv4 total length %u = 20 + %u\n", head->tot_len, ip_data_len);
 	#endif
 }
-
-
+/*
+ * 0                   1                   2                   3
+ * 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |Version|  IHL  |Type of Service|          Total Length         |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |         Identification        |Flags|      Fragment Offset    |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |  Time to Live |    Protocol   |         Header Checksum       |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |                       Source Address                          |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |                    Destination Address                        |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ * |                    Options                    |    Padding    |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
 uint16_t calculate_ipv4_header_checksum(ipv4_head_s *head){
 	uint16_t sum = 0;
-	sum += (uint16_t)(head->ecn) 
-		 | (uint16_t)(head->dscp << 2)
-		 | (uint16_t)(head->ihl  << 8)
-		 | (uint16_t)(head->ver  << 12);
+	sum += (head->ecn & 0x3);
+	sum += (head->dscp & 0x3f)<< 2;
+	sum += (head->ihl & 0xf) << 8;
+	sum += (head->ver & 0xf) << 12;
 	sum += head->tot_len;
 	sum += head->id;
-	sum += (uint16_t)(head->flags << 13)
-		 | (uint16_t)head->frag_off;
-	sum += (uint16_t)(head->ttl << 8)
-		 | (uint16_t)(head->prot);
-	sum += (uint16_t)(head->src_addr);	
-	sum += (uint16_t)(head->src_addr >>16);	
-	sum += (uint16_t)(head->dst_addr);	
-	sum += (uint16_t)(head->dst_addr>>16);
-	return sum;	
+	sum += (head->flags & 0x3) << 13;
+	sum += head->frag_off & 0x3fff;
+	sum += (head->ttl & 0xff) << 8;
+	sum += head->prot & 0xff;
+	sum += (head->src_addr & 0xffff0000) >>16;	
+	sum += head->src_addr & 0xffff;	
+	sum += (head->dst_addr & 0xffff0000)>>16;
+	sum += head->dst_addr & 0xffff;	
+
+	/* one's complement of the sum */
+	return ~sum;	
 }
 
 void print_ipv4_head(ipv4_head_s *head){

@@ -16,12 +16,18 @@
 
 #define PKT_LEN_MAX 1800
 #define PKT_LEN_MIN 30
-#define NODE_CNT 4
-#define PKT_CNT 20
+#define NODE_CNT 100
+#define PKT_CNT 200
+
+#define RAND_SEED 10
+
+static inline void set_rand_mac(uint8_t mac[6]){
+	for(int i=0;i<6;i++)
+		mac[i] = (uint8_t)rand();
+}
 
 int main(){
 	uint8_t t[1] = {0};
-
 
 	printf("Running test\n");
 	
@@ -32,18 +38,25 @@ int main(){
 	printf("PASS: data { 0 } crc result : %08x\n", crc);
 
 	/* create node structs */
-	
+	/* init rand with non-random seed */
+	srand(RAND_SEED);
+
 	eth_packet_s *node[NODE_CNT];	
 
 	for(int i=0; i < NODE_CNT; i++){
+		uint8_t src_mac[6];
+		uint8_t dst_mac[6];
+		set_rand_mac(src_mac);
+		set_rand_mac(dst_mac);
+
 		node[i] = init_eth_packet(
-			( i % 2) ? DEFAULT_DST_MAC: DEFAULT_SRC_MAC ,
-			( i % 2) ? DEFAULT_SRC_MAC: DEFAULT_DST_MAC,
-			( i % 2) ? DEFAULT_SRC_IP: DEFAULT_DST_IP ,
-			( i % 2) ? DEFAULT_DST_IP: DEFAULT_SRC_IP ,
-			( i % 2) ? DEFAULT_SRC_PORT: DEFAULT_DST_PORT,
-			( i % 2) ? DEFAULT_DST_PORT: DEFAULT_SRC_PORT,
-			(i % 2) ? true: false );
+			src_mac,
+			dst_mac,
+			(uint32_t)rand(),
+			(uint32_t)rand(),
+			(uint16_t)rand(),
+			(uint16_t)rand(),
+			(rand() % 2) ? true: false );
 		printf("------\nnode %d\n\n",i);
 		print_eth_packet(node[i]);
 	}
